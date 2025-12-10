@@ -25,6 +25,45 @@ const getRefreshTokenCookieOptions = () => ({
   path: '/auth/refresh',
 });
 
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Login user
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: username@emailaddress.com
+ *               password:
+ *                 type: string
+ *                 example: password
+ *     responses:
+ *       200:
+ *         description: Login successful, sets HttpOnly cookies
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Invalid credentials
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 router.post('/login', async (req, res) => {
   try {
     const body = loginSchema.parse(req.body);
@@ -69,6 +108,18 @@ router.post('/login', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /auth/refresh:
+ *   post:
+ *     summary: Refresh access token
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: Tokens refreshed
+ *       401:
+ *         description: Invalid refresh token
+ */
 router.post('/refresh', async (req, res) => {
   try {
     const token = req.cookies.refreshToken;
@@ -100,6 +151,16 @@ router.post('/refresh', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /auth/logout:
+ *   post:
+ *     summary: Logout user
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: Logged out successfully
+ */
 router.post('/logout', (req, res) => {
   res.clearCookie('accessToken');
   res.clearCookie('refreshToken', { path: '/auth/refresh' });
@@ -107,6 +168,22 @@ router.post('/logout', (req, res) => {
   return res.json({ message: 'Logged out successfully' });
 });
 
+/**
+ * @swagger
+ * /auth/me:
+ *   get:
+ *     summary: Get current user
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: Current user data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Not authenticated
+ */
 router.get('/me', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const [user] = await db

@@ -12,6 +12,35 @@ const router = Router();
 // All todo routes require authentication
 router.use(authMiddleware);
 
+/**
+ * @swagger
+ * /lists/{listId}/todos:
+ *   get:
+ *     summary: Get all todos for a specific list
+ *     tags: [Todos]
+ *     parameters:
+ *       - in: path
+ *         name: listId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: List ID
+ *     responses:
+ *       200:
+ *         description: Array of todos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Todo'
+ *       400:
+ *         description: Invalid list ID
+ *       404:
+ *         description: List not found
+ *       401:
+ *         description: Not authenticated
+ */
 router.get('/lists/:listId/todos', async (req: AuthRequest, res: Response) => {
   try {
     const listId = parseNumericId(req.params.listId);
@@ -38,6 +67,35 @@ router.get('/lists/:listId/todos', async (req: AuthRequest, res: Response) => {
   }
 });
 
+/**
+ * @swagger
+ * /todos/{id}:
+ *   get:
+ *     summary: Get a specific todo
+ *     tags: [Todos]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Todo ID
+ *     responses:
+ *       200:
+ *         description: Todo data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Todo'
+ *       400:
+ *         description: Invalid todo ID
+ *       404:
+ *         description: Todo not found
+ *       403:
+ *         description: Forbidden - todo belongs to another user
+ *       401:
+ *         description: Not authenticated
+ */
 router.get('/todos/:id', async (req: AuthRequest, res: Response) => {
   try {
     const todoId = parseNumericId(req.params.id);
@@ -68,6 +126,45 @@ router.get('/todos/:id', async (req: AuthRequest, res: Response) => {
   }
 });
 
+/**
+ * @swagger
+ * /lists/{listId}/todos:
+ *   post:
+ *     summary: Create a new todo in a list
+ *     tags: [Todos]
+ *     parameters:
+ *       - in: path
+ *         name: listId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: List ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: Buy milk
+ *     responses:
+ *       201:
+ *         description: Todo created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Todo'
+ *       400:
+ *         description: Invalid list ID or validation error
+ *       404:
+ *         description: List not found
+ *       401:
+ *         description: Not authenticated
+ */
 router.post('/lists/:listId/todos', async (req: AuthRequest, res: Response) => {
   try {
     const listId = parseNumericId(req.params.listId);
@@ -100,6 +197,49 @@ router.post('/lists/:listId/todos', async (req: AuthRequest, res: Response) => {
     throw error;
   }
 });
+
+/**
+ * @swagger
+ * /todos/{id}:
+ *   put:
+ *     summary: Update a todo
+ *     tags: [Todos]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Todo ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: Buy eggs
+ *               done:
+ *                 type: boolean
+ *                 example: true
+ *     responses:
+ *       200:
+ *         description: Todo updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Todo'
+ *       400:
+ *         description: Invalid todo ID or validation error
+ *       404:
+ *         description: Todo not found
+ *       403:
+ *         description: Forbidden - todo belongs to another user
+ *       401:
+ *         description: Not authenticated
+ */
 
 router.put('/todos/:id', async (req: AuthRequest, res: Response) => {
   try {
@@ -134,6 +274,39 @@ router.put('/todos/:id', async (req: AuthRequest, res: Response) => {
   }
 });
 
+/**
+ * @swagger
+ * /todos/{id}:
+ *   delete:
+ *     summary: Delete a todo
+ *     tags: [Todos]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Todo ID
+ *     responses:
+ *       200:
+ *         description: Todo deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Todo deleted successfully
+ *       400:
+ *         description: Invalid todo ID
+ *       404:
+ *         description: Todo not found
+ *       403:
+ *         description: Forbidden - todo belongs to another user
+ *       401:
+ *         description: Not authenticated
+ */
 router.delete('/todos/:id', async (req: AuthRequest, res: Response) => {
   try {
     const todoId = parseNumericId(req.params.id);

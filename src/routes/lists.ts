@@ -12,6 +12,24 @@ const router = Router();
 // All list routes MUST be authenticated
 router.use(authMiddleware);
 
+/**
+ * @swagger
+ * /lists:
+ *   get:
+ *     summary: Get all lists for current user
+ *     tags: [Lists]
+ *     responses:
+ *       200:
+ *         description: Array of lists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/List'
+ *       401:
+ *         description: Not authenticated
+ */
 router.get('/', async (req: AuthRequest, res: Response) => {
   try {
     const userLists = await db.select().from(lists).where(eq(lists.createdBy, req.user!.userId));
@@ -22,6 +40,29 @@ router.get('/', async (req: AuthRequest, res: Response) => {
   }
 });
 
+/**
+ * @swagger
+ * /lists/{id}:
+ *   get:
+ *     summary: Get a specific list
+ *     tags: [Lists]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: List ID
+ *     responses:
+ *       200:
+ *         description: List data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/List'
+ *       404:
+ *         description: List not found
+ */
 router.get('/:id', async (req: AuthRequest, res: Response) => {
   try {
     const listId = parseNumericId(req.params.id);
@@ -45,6 +86,35 @@ router.get('/:id', async (req: AuthRequest, res: Response) => {
   }
 });
 
+/**
+ * @swagger
+ * /lists:
+ *   post:
+ *     summary: Create a new list
+ *     tags: [Lists]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: Shopping List
+ *               description:
+ *                 type: string
+ *                 example: Weekly groceries
+ *     responses:
+ *       201:
+ *         description: List created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/List'
+ */
 router.post('/', async (req: AuthRequest, res: Response) => {
   try {
     const body = createListSchema.parse(req.body);
@@ -64,6 +134,35 @@ router.post('/', async (req: AuthRequest, res: Response) => {
   }
 });
 
+/**
+ * @swagger
+ * /lists/{id}:
+ *   put:
+ *     summary: Update a list
+ *     tags: [Lists]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: List updated
+ *       404:
+ *         description: List not found
+ */
 router.put('/:id', async (req: AuthRequest, res: Response) => {
   try {
     const listId = parseInt(req.params.id);
@@ -87,6 +186,24 @@ router.put('/:id', async (req: AuthRequest, res: Response) => {
   }
 });
 
+/**
+ * @swagger
+ * /lists/{id}:
+ *   delete:
+ *     summary: Delete a list
+ *     tags: [Lists]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: List deleted
+ *       404:
+ *         description: List not found
+ */
 router.delete('/:id', async (req: AuthRequest, res: Response) => {
   try {
     const listId = parseInt(req.params.id);
