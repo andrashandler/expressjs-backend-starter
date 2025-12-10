@@ -4,8 +4,7 @@
   "description": "Express.js backend starter with TypeScript, SQLite, Drizzle ORM, JWT auth, and Swagger documentation",
   "type": "module",
   "main": "dist/index.js",
-  "scripts": {
-  },
+  "scripts": {},
   "keywords": [
     "express",
     "typescript",
@@ -15,5 +14,8 @@
     "swagger"
   ],
   "author": "Andras Handler",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
 }
