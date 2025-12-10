@@ -1,0 +1,19 @@
+{
+  "name": "expressjs-backend-starter",
+  "version": "1.0.0",
+  "description": "Express.js backend starter with TypeScript, SQLite, Drizzle ORM, JWT auth, and Swagger documentation",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+  },
+  "keywords": [
+    "express",
+    "typescript",
+    "sqlite",
+    "drizzle",
+    "jwt",
+    "swagger"
+  ],
+  "author": "Andras Handler",
+  "license": "MIT"
+}
