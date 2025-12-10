@@ -4,7 +4,12 @@
   "description": "Express.js backend starter with TypeScript, SQLite, Drizzle ORM, JWT auth, and Swagger documentation",
   "type": "module",
   "main": "dist/index.js",
-  "scripts": {},
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
+  },
   "keywords": [
     "express",
     "typescript",
